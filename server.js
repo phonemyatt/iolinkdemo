@@ -1,4 +1,5 @@
 const express = require('express');
+const moment = require('moment');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
@@ -22,19 +23,19 @@ app.get('/data', (req, res)=> {
 app.get('/iolink', (req, res) => {
     // request.get('http://192.168.0.2/dprop.jsn').pipe(res);
 
-    request('http://192.168.0.2/dprop.jsn', function (error, response, body) {
-        if ( response.statusCode == 200) {
-            // console.log( body );       
-            var temp = JSON.parse(body);
-            // console.log( temp[0].ProductId );
+    // request('http://192.168.0.2/dprop.jsn', function (error, response, body) {
+    //     if ( response.statusCode == 200) {
+    //         // console.log( body );       
+    //         var temp = JSON.parse(body);
+    //         // console.log( temp[0].ProductId );
 
-            var myproduct = _.find(temp, function(o) {
-                return o.ProductId === "BAE00T4";
-            });
-            // console.log(myproduct);
-            res.send(myproduct.ProductText);
-        }
-    });
+    //         var myproduct = _.find(temp, function(o) {
+    //             return o.ProductId === "BAE00T4";
+    //         });
+    //         // console.log(myproduct);
+    //         res.send(myproduct.ProductText);
+    //     }
+    // });
 });
 
 io.on('connection', (socket) => {
@@ -44,6 +45,7 @@ io.on('connection', (socket) => {
     // }, 1000);
 
     setInterval(function() {
+        var timenow = moment().format('hh:mm:ss');
         request('http://192.168.0.2/dprop.jsn', function(error,response,body) {
             if ( response.statusCode == 200 ) {
                 var data = JSON.parse(body);
@@ -52,15 +54,16 @@ io.on('connection', (socket) => {
                 });
                 var processdata = data.ProcessInputs.split(' ').join('').substring(0,6);
                 console.log(processdata.substring(0,6));
-                var result = {                    
+                var result = {                
+                    "Time": timenow,    
+                    "Product" : data.ProductText,
                     "Voltage" : (parseInt(processdata.substr(0,3), 16) * 0.1).toString() ,
                     "Current" : (parseInt(processdata.substring(3,6), 16) * 0.1).toString()
-                };
-
+                };                
                 io.sockets.emit('message', result);
             }
         });
-    }, 1500);
+    }, 5000);
     
 });
 
