@@ -1,32 +1,37 @@
 var socket = io();
 
 var N = 10;
+var lifeexp = 0;
+var ophour = 0;
+var pricaptemp = 0;
+var seccaptemp = 0;
 
 var config = {
-      type: 'line',
+      type: "line",
       data: {
       labels: [],
       datasets: [{
-        label: 'Voltage',
+        label: "Voltage",
         data: [],
-        fillColor: "rgba(96,169,23,0.2)",
-        strokeColor: "rgba(96,169,23,1)",
-        pointColor: "rgba(96,169,23,1)",
-        pointStrokeColor: "#60A917",
-        pointHighlightFill: "#60A917",
-        pointHighlightStroke: "rgba(96,169,23,1)"
+        backgroundColor: "rgba(255,87,51,0.2)",
+        borderColor: "rgba(255,87,51,0.4)",
+        borderWidth: 1
       }, {
-        label: 'Current',
+        label: "Current",
         data: [],
-        fillColor: "rgba(151,186,205,0.2)",
-        strokeColor: "rgba(151,186,205,1)",
-        pointColor: "rgba(151,186,205,1)",
-        pointStrokeColor: "#DB0073",
-        pointHighlightFill: "#DB0073",
-        pointHighlightStroke: "rgba(151,186,205,1)"
+        backgroundColor: "rgba(51,0,255,0.2)",
+        borderColor: "rgba(51,0,255,0.4)",
+        borderWidth: 1
       }]
     }
 };
+
+// fillColor: "rgba(51,0,255,0.2)",
+// strokeColor: "rgba(51,0,255,1)",
+// pointColor: "rgba(51,0,255,1)",
+// pointStrokeColor: "#fff",
+// pointHighlightFill: "#fff",
+// pointHighlightStroke: "rgba(51,0,255,1)"
 
 var ctx;
 var line_example_chart;
@@ -60,9 +65,9 @@ function getIOLink() {
     xhttp.send();
 }
 
-socket.on('message', function (data) {    
+socket.on('voutiout', function (data) {    
     document.getElementById("devicetext").innerText= data.Product;
-    console.log(data);
+    console.log(config);
     if (config.data.labels.length > 9) {
         config.data.labels.shift();   
         config.data.datasets[0].data.shift();
@@ -73,3 +78,27 @@ socket.on('message', function (data) {
     config.data.datasets[1].data.push(data.Current);
     line_example_chart.update();
 });
+
+socket.on('operatinghour', function(data) {
+    ophour = parseInt(data) || ophour;
+    document.getElementById('deviceoperatinghours').innerText = ophour + 'hrs';
+})
+
+socket.on('expectedlifetime', function(data) {
+    lifeexp = parseInt(data) || lifeexp;
+    document.getElementById('devicelife').innerText = lifeexp + 'years';
+})
+
+socket.on('primcaptemp', function(data) {
+    pricaptemp = parseInt(data) || pricaptemp;
+    document.getElementById('primcaptemp').innerText = pricaptemp + '*C';
+})
+
+socket.on('seccaptemp', function(data) {
+    seccaptemp = parseInt(data) || seccaptemp;
+    document.getElementById('seccaptemp').innerText = seccaptemp + '*C';
+})
+
+socket.on('clientcount', function(data) {
+    console.log(data);
+})
