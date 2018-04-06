@@ -1,6 +1,6 @@
 # iolinkdemo
 
-- ![#c5f015](https://placehold.it/15/c5f015/000000?text=+) `#c5f015`
+- ![#c5f015](https://placehold.it/15/c5f015/000000?text=+) 
 Test IO Link Devices
 
 Refer balluff website for IO-Link Interface in doc
@@ -11,7 +11,7 @@ Refer balluff website for IO-Link Interface in doc
    BNI PNT-508-105-Z015 
    
 
-- ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) `#f03c15`
+- ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) 
 Required Steps
 
 1. install nodejs from "https://nodejs.org/en/" (choose the lastest)
