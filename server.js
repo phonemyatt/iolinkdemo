@@ -51,7 +51,8 @@ io.on('connection', (socket) => {
 
 setInterval(function () {
         var timenow = moment().format('hh:mm:ss');
-        request('http://192.168.0.2/dprop.jsn', function (error, response, body) {
+        request('http://192.168.0.2/dprop.jsn', function (error, response, body) {  
+            if (error) { return; }
             if (allClients.length > 0 && response.statusCode == 200) {
                 var data = JSON.parse(body);
                 data = _.find(data, function (o) {
@@ -107,7 +108,7 @@ setInterval(function () {
 setInterval(function() {
     // request 0x0502 - life time in years
     request.post({url: 'http://192.168.0.2/iolink.htm', form: {Port:'0', Index:'1282',SubIndex:'0'}}, function(err,httpResponse,body){
-        var myvalue = parseInt(extractHTMLtoValue(body),16).toString();
+        var myvalue = parseInt(extractHTMLtoValue(body),16).toString();        
         console.log(myvalue);
         io.sockets.emit('expectedlifetime', myvalue);
     });
@@ -133,8 +134,12 @@ setInterval(function() {
     });
 }, 9000);
 function extractHTMLtoValue(data) {   
-    return data.match(/(elemResult.value\s=\s").*;/g)[0].match(/(["'])(?:(?=(\\?))\2.)*?\1/g)[0].match(/\w./g).join(''); 
+    if ( data ) {
+        return data.match(/(elemResult.value\s=\s").*;/g)[0].match(/(["'])(?:(?=(\\?))\2.)*?\1/g)[0].match(/\w./g).join(''); 
+    }
+    return "0";    
 }
+
 http.listen(port, function () {
     console.log("server is started");
 });
